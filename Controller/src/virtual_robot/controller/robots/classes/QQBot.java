@@ -82,6 +82,17 @@ public class QQBot extends TurretBot {
         hardwareMap.put("rotator", new ServoImpl());
 
         hardwareMap.put("intake_motor", new DcMotorExImpl(MotorType.Neverest40));
+
+        hardwareMap.put("transfer_motor", new DcMotorExImpl(MotorType.Neverest40));
+
+        hardwareMap.put("shooter_back_motor", new DcMotorExImpl(MotorType.Neverest40));
+        hardwareMap.put("shooter_front_motor", new DcMotorExImpl(MotorType.Neverest40));
+
+        hardwareMap.put("servo_pivot_shooter", new ServoImpl());
+        hardwareMap.put("servo_import_shooter", new ServoImpl());
+        /*
+
+         */
     }
 
     /**
