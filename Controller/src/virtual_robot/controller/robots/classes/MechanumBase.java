@@ -35,11 +35,11 @@ public class MechanumBase extends VirtualBot {
      * No-param constructor. Uses the default motor type of Neverest 40
      */
     public MechanumBase() {
-        super();
-        MOTOR_TYPE = MotorType.Neverest40;
+        this(MotorType.Neverest40);
     }
 
     public MechanumBase(MotorType driveMotorType){
+        super();
         MOTOR_TYPE = driveMotorType;
     }
 
