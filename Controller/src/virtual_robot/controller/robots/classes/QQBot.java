@@ -1,6 +1,7 @@
 package virtual_robot.controller.robots.classes;
 
 import com.qualcomm.hardware.bosch.BNO055IMUImpl;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotorExImpl;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImpl;
@@ -32,6 +33,9 @@ public class QQBot extends TurretBot {
     private ServoImpl rotatorServo;
     // intake mechanism
     private DcMotorExImpl intakeMotor;
+    //
+    private AnalogInput liftPot;
+
 
     /**
      * Constructor.
@@ -57,6 +61,8 @@ public class QQBot extends TurretBot {
 
         //Instantiate the motor
         intakeMotor = (DcMotorExImpl) hardwareMap.dcMotor.get("intake_motor");
+
+        liftPot = hardwareMap.get(AnalogInput.class, "lift_pot");
 
         //Deactivate the hardwaremap to prevent users from accessing hardware until after INIT is pressed
         hardwareMap.setActive(false);
@@ -106,6 +112,8 @@ public class QQBot extends TurretBot {
 
         hardwareMap.put("servo_pivot_shooter", new ServoImpl());
         hardwareMap.put("servo_import_shooter", new ServoImpl());
+
+        hardwareMap.put("lift_pot", new AnalogInput(5.0));
     }
 
     /**
@@ -115,6 +123,7 @@ public class QQBot extends TurretBot {
      */
     public synchronized void updateStateAndSensors(double millis) {
         super.updateStateAndSensors(millis);
+        //TODO: needs code here for liftPot
     }
 
     /**
