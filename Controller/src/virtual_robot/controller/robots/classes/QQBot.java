@@ -41,8 +41,9 @@ public class QQBot extends TurretBot {
      * Constructor.
      */
     public QQBot() {
-        super();
+        super(MotorType.Gobilda137);
 
+        gearRatioWheel = 0.5;  // take into account 2:1 reduction from motor
     }
 
     /**
@@ -66,8 +67,6 @@ public class QQBot extends TurretBot {
 
         //Deactivate the hardwaremap to prevent users from accessing hardware until after INIT is pressed
         hardwareMap.setActive(false);
-
-        gearRatioWheel = 0.5;  // take into account 2:1 reduction from motor
     }
 
     /**
@@ -75,21 +74,6 @@ public class QQBot extends TurretBot {
      */
     protected void createHardwareMap() {
         super.createHardwareMap();
-
-
-        String[] motorNames = new String[]{"back_left_motor", "front_left_motor", "front_right_motor", "back_right_motor"};
-
-        hardwareMap.setActive(true);
-        /*
-         * Removing the motors from the dcMotor DeviceMapping removes all trace of them from the HardwareMap (from
-         * the DeviceMapping inner class instance and from the HardwareMap outer class instance). Using the remove method
-         * of HardwareMap directly does not remove them from the DeviceMapping.
-         */
-        for (String name : motorNames) {
-            hardwareMap.dcMotor.remove(name);
-        }
-        hardwareMap.setActive(false);
-        for (String name : motorNames) hardwareMap.put(name, new DcMotorExImpl(MotorType.Gobilda137));
 
         /*
          * Note: this will overwrite the ColorSensor object that is already in the HardwareMap from the
