@@ -9,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 import virtual_robot.controller.BotConfig;
-import virtual_robot.controller.VirtualRobotController;
 
 /**
  * For internal use only. Represents a robot with four mecanum wheels,
@@ -21,7 +20,6 @@ public class QQ_Bot_PP extends MecanumPhysicsBase {
     private ServoImpl rotate_servo = null;
 
     private DcMotorExImpl lift_motor = null;
-    private VirtualRobotController.ColorSensorImpl coneDetector = null;
 
 
     public QQ_Bot_PP() {
@@ -31,18 +29,18 @@ public class QQ_Bot_PP extends MecanumPhysicsBase {
     public void initialize() {
         super.initialize();
         hardwareMap.setActive(true);
-        claw_servo = (ServoImpl) hardwareMap.servo.get("claw");
+        claw_servo = (ServoImpl) hardwareMap.servo.get("claw_servo");
+        rotate_servo = (ServoImpl) hardwareMap.servo.get("rotate_servo");
         lift_motor = (DcMotorExImpl) hardwareMap.dcMotor.get("lift_motor");
-        coneDetector = (VirtualRobotController.ColorSensorImpl) hardwareMap.colorSensor.get("cone_detector");
 
         hardwareMap.setActive(false);
     }
 
     protected void createHardwareMap() {
         super.createHardwareMap();
-        hardwareMap.put("claw", new ServoImpl());
+        hardwareMap.put("claw_servo", new ServoImpl());
+        hardwareMap.put("rotate_servo", new ServoImpl());
         hardwareMap.put("lift_motor", new DcMotorExImpl(MotorType.Gobilda137));
-        hardwareMap.put("cone_detector", controller.new ColorSensorImpl());
     }
 
     public synchronized void updateStateAndSensors(double millis) {
