@@ -5,15 +5,15 @@
 <Group xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1"
     fx:controller="virtual_robot.robots.classes.QQ_Bot_PP">
     <children>
-        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="YELLOW" height="75.0" stroke="BLACK"
+        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="PURPLE" height="75.0" stroke="BLACK"
             strokeType="INSIDE" width="75.0" />
-        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="BLUE" height="20.0" stroke="BLACK"
+        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="YELLOW" height="20.0" stroke="BLACK"
             strokeType="INSIDE" width="10.0" y="55.0" />
-        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="BLUE" height="20.0" stroke="BLACK"
+        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="YELLOW" height="20.0" stroke="BLACK"
             strokeType="INSIDE" width="10.0" />
-        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="BLUE" height="20.0" stroke="BLACK"
+        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="YELLOW" height="20.0" stroke="BLACK"
             strokeType="INSIDE" width="10.0" x="65.0" />
-        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="BLUE" height="20.0" stroke="BLACK"
+        <Rectangle arcHeight="5.0" arcWidth="5.0" fill="YELLOW" height="20.0" stroke="BLACK"
             strokeType="INSIDE" width="10.0" x="65.0" y="55.0" />
         <Rectangle arcHeight="5.0" fill="LIME" height="10.0" stroke="BLACK" strokeType="INSIDE"
             width="10.0" x="32.5" />
