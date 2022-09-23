@@ -25,7 +25,7 @@ public class QQ_Bot_PP extends MecanumPhysicsBase {
 
 
     public QQ_Bot_PP() {
-        super();
+        super(MotorType.Gobilda192);
     }
 
     public void initialize() {
