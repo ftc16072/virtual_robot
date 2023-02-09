@@ -1,20 +1,15 @@
 package virtual_robot.robots.classes;
 
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorExImpl;
-import com.qualcomm.robotcore.hardware.DcMotorImpl;
+import com.qualcomm.robotcore.hardware.DeadWheelEncoder;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DigitalChannelImpl;
-import com.qualcomm.robotcore.hardware.PassiveColorSensorImpl;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImpl;
 import com.qualcomm.robotcore.hardware.configuration.MotorType;
 
-import javafx.fxml.FXML;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.transform.Rotate;
 import virtual_robot.controller.BotConfig;
 import virtual_robot.controller.VirtualRobotController;
+import virtual_robot.util.AngleUtils;
 
 /**
  * For internal use only. Represents a robot with four mecanum wheels,
@@ -25,13 +20,33 @@ public class QQ_Bot_PP extends MecanumPhysicsBase {
     private ServoImpl claw_servo = null;
     private ServoImpl pulley_servo = null;
 
-    private ServoImpl rotate_servo = null;
+    private final ServoImpl rotate_servo = null;
 
     private DcMotorExImpl right_lift_motor = null;
     private DcMotorExImpl left_lift_motor = null;
     private DigitalChannelImpl lift_switch = null;
     private VirtualRobotController.ColorSensorImpl coneDetector = null;
+    private final MotorType encoderMotorType = MotorType.Gobilda192;
+    private DeadWheelEncoder rightEncoder = null;
+    private DeadWheelEncoder leftEncoder = null;
+    private DeadWheelEncoder xEncoder = null;
 
+    //Dimensions in inches for encoder wheels.
+    //Right and left encoder wheels are oriented parallel to robot-Y axis (i.e., fwd-reverse)
+    //X Encoder wheel is oriented parallel to the robot-X axis (i.e., right-left axis)
+    private final double MM_PER_INCH = 1 / 25.4;
+    private final double ENCODER_WHEEL_DIAMETER = 38 * MM_PER_INCH;
+    //Distances of right and left encoder wheels from robot centerline (i.e., the robot-X coordinates of the wheels)
+    private final double LEFT_ENCODER_X = -6.0;
+    private final double RIGHT_ENCODER_X = 6.0;
+    //Distance of X-Encoder wheel from robot-X axis (i.e., the robot-Y coordinate of the wheel)
+    private final double X_ENCODER_Y = 0.0;
+
+    //Dimensions in pixels -- to be determined in the constructor
+    private double encoderWheelRadius;
+    private double leftEncoderX;
+    private double rightEncoderX;
+    private double xEncoderY;
 
     public QQ_Bot_PP() {
         super(MotorType.Gobilda192);
@@ -48,6 +63,16 @@ public class QQ_Bot_PP extends MecanumPhysicsBase {
         left_lift_motor = (DcMotorExImpl) hardwareMap.dcMotor.get("left_lift_motor");
         lift_switch = (DigitalChannelImpl) hardwareMap.get(DigitalChannel.class, "lift_switch");
         coneDetector = (VirtualRobotController.ColorSensorImpl) hardwareMap.colorSensor.get("cone_detector");
+        leftEncoder = hardwareMap.get(DeadWheelEncoder.class, "enc_left");
+        rightEncoder = hardwareMap.get(DeadWheelEncoder.class, "enc_right");
+        xEncoder = hardwareMap.get(DeadWheelEncoder.class, "enc_x");
+
+        //Dimensions in pixels
+        encoderWheelRadius = 0.5 * ENCODER_WHEEL_DIAMETER * botWidth / 18.0;
+        leftEncoderX = LEFT_ENCODER_X * botWidth / 18.0;
+        rightEncoderX = RIGHT_ENCODER_X * botWidth / 18.0;
+        xEncoderY = X_ENCODER_Y * botWidth / 18.0;
+
         hardwareMap.setActive(false);
     }
 
@@ -60,11 +85,41 @@ public class QQ_Bot_PP extends MecanumPhysicsBase {
         hardwareMap.put("left_lift_motor", new DcMotorExImpl(MotorType.Gobilda137));
         hardwareMap.put("cone_detector", controller.new ColorSensorImpl());
         hardwareMap.put("lift_switch", new DigitalChannelImpl());
+        String[] encoderNames = new String[]{"enc_right", "enc_left", "enc_x"};
+        for (String name : encoderNames)
+            hardwareMap.put(name, new DeadWheelEncoder(encoderMotorType));
     }
 
     public synchronized void updateStateAndSensors(double millis) {
+        //Save old x, y, and headingRadians values for updating free wheel encoders later
+        double xOld = x;
+        double yOld = y;
+        double headingOld = headingRadians;
+
         //Compute new pose and update various sensors
         super.updateStateAndSensors(millis);
+
+        //For the deadwheel encoders, recalculate dXR and dYR to take into account the fact that the robot
+        //may have run into the wall.
+        double deltaX = x - xOld;
+        double deltaY = y - yOld;
+        double headingChange = AngleUtils.normalizeRadians(headingRadians - headingOld);
+        double avgHeading = AngleUtils.normalizeRadians(headingOld + 0.5 * headingChange);
+        double sin = Math.sin(avgHeading);
+        double cos = Math.cos(avgHeading);
+
+        double dxR = deltaX * cos + deltaY * sin;
+        double dyR = -deltaX * sin + deltaY * cos;
+
+        //Compute radians of rotation of each dead wheel encoder
+        double rightEncoderRadians = (dyR + rightEncoderX * headingChange) / encoderWheelRadius;
+        double leftEncoderRadians = -(dyR + leftEncoderX * headingChange) / encoderWheelRadius;
+        double xEncoderRadians = -(dxR - xEncoderY * headingChange) / encoderWheelRadius;
+
+        //Update positions of the dead wheel encoders
+        rightEncoder.update(rightEncoderRadians, millis);
+        leftEncoder.update(leftEncoderRadians, millis);
+        xEncoder.update(xEncoderRadians, millis);
     }
 
     public synchronized void updateDisplay() {
@@ -73,6 +128,9 @@ public class QQ_Bot_PP extends MecanumPhysicsBase {
 
     public void powerDownAndReset() {
         super.powerDownAndReset();
+        rightEncoder.stopAndReset();
+        leftEncoder.stopAndReset();
+        xEncoder.stopAndReset();
     }
 
 
