@@ -7,6 +7,7 @@ package android.graphics;
 public class Color {
     public static int BLUE = argb(0,0,0,255);
     public static int GREEN = argb(0, 0, 255, 0);
+    public static int RED = argb(0, 255, 0, 0);
 
     /**
      * Given inputs of red, green, and blue channels, writes the hue, sat, and value to the hsv output array
