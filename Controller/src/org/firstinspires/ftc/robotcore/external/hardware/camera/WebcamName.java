@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.robotcore.external.hardware.camera;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.qualcomm.robotcore.hardware.HardwareDevice;
 
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
@@ -29,4 +32,6 @@ public class WebcamName implements CameraName, HardwareDevice {
     public boolean requestCameraPermission(Deadline deadline) {
         return false;
     }
+
+    public boolean isAttached(){ return false; }
 }
