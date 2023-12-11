@@ -79,6 +79,9 @@ public class QQ_Bot extends MecanumPhysicsBase {
         hardwareMap.put("lift_switch", new DigitalChannelImpl());
         hardwareMap.put("left_cone_detector", new DigitalChannelImpl());
         hardwareMap.put("right_cone_detector", new DigitalChannelImpl());
+        hardwareMap.put("FrontCamera", new WebcamName());
+        hardwareMap.put("BackCamera", new WebcamName());
+
         String[] encoderNames = new String[]{"enc_right", "enc_left", "enc_x"};
         for (String name : encoderNames)
             hardwareMap.put(name, new DeadWheelEncoder(encoderMotorType));
